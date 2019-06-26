@@ -28,7 +28,7 @@ const sendMail = (email, password, to, subject, arweaveHash) => {
             from: email, // sender address
             to: to, // list of receivers
             subject: subject, // Subject line
-            html: `<p>Your email stored here: https://arweave.net/${arweaveHash}. PLease wait 10-30 minutes for the page to be available</p>`// plain text body
+            html: `<p>Your email stored here: https://arweave.net/${arweaveHash}. Please wait 10-30 minutes for the page to be available</p>`// plain text body
         };
 
         console.log('Sending mail...');
