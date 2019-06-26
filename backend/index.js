@@ -24,7 +24,7 @@ const arweave = Arweave.init({
     logging: false,
 });
 
-const sendMail = (email, password, to, subject, arweaveHash) => {
+const sendMail = (email, password, to, subject, arweaveHash, isCmdSend) => {
     return new Promise((resolve, reject) => {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -42,15 +42,33 @@ const sendMail = (email, password, to, subject, arweaveHash) => {
         };
 
         console.log(`Sending mail (to: ${to})...`);
-        return transporter.sendMail(mailOptions, function (err, info) {
-            if (err) {
-                console.log('Error', err);
-                reject(err);
-            } else {
-                console.log('Info', info);
-                resolve(info);
-            }
-        });
+        if(isCmdSend){
+            const { exec } = require('child_process');
+            exec(`echo "Your email stored here: https://arweave.net/${arweaveHash}. Please wait 10-30 minutes for the page to be available" | mutt -s "Email saved to Arweave" ${to}`, (err, stdout, stderr) => {
+                if (err) {
+                    // node couldn't execute the command
+                    reject(err);
+
+                    return;
+                }
+
+                // the *entire* stdout and stderr (buffered)
+                console.log(`stdout: ${stdout}`);
+                console.log(`stderr: ${stderr}`);
+                resolve({result: 'ok'});
+            });
+        }else{
+            return transporter.sendMail(mailOptions, function (err, info) {
+                if (err) {
+                    console.log('Error', err);
+                    reject(err);
+                } else {
+                    console.log('Info', info);
+                    resolve(info);
+                }
+            });
+        }
+
     });
 };
 
@@ -70,7 +88,7 @@ const uploadToArweave = async (html) => {
 };
 
 
-const code = (email, password, template) => {
+const code = (email, password, template, isCmdSend) => {
     return new Promise((resolve, reject) => {
         var c = {
             imap: {
@@ -147,10 +165,13 @@ const code = (email, password, template) => {
                                         .then(hash => {
                                             console.log('Uploaded!');
                                             console.log(hash);
-                                            return sendMail(email, password, result.from, 'Email saved to Arweave', hash)
+
+                                            return sendMail(email, password, result.from, 'Email saved to Arweave', hash, isCmdSend)
                                                 .then(data => {
                                                     console.log(data);
                                                 });
+
+
                                         });
                                 });
 
@@ -163,11 +184,11 @@ const code = (email, password, template) => {
 };
 
 console.log('Receive mails...');
-code(config.full.email, config.full.password, 'template_full.html')
+code(config.full.email, config.full.password, 'template_full.html', config.full.isCmdSend)
     .then((mails) => {
         console.log('Full mails received');
     });
-code(config.sign.email, config.sign.password, 'template_sign.html')
+code(config.sign.email, config.sign.password, 'template_sign.html', config.sign.isCmdSend)
     .then((mails) => {
         console.log('Sign mails received');
     });
