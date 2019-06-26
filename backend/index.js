@@ -41,7 +41,7 @@ const sendMail = (email, password, to, subject, arweaveHash) => {
             html: `<p>Your email stored here: https://arweave.net/${arweaveHash}. Please wait 10-30 minutes for the page to be available</p>`// plain text body
         };
 
-        console.log('Sending mail...');
+        console.log(`Sending mail (to: ${to})...`);
         return transporter.sendMail(mailOptions, function (err, info) {
             if (err) {
                 console.log('Error', err);
