@@ -1,0 +1,14 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "arweave": "^1.4.0",
+    "btoa": "^1.2.1",
+    "imap": "^0.8.19",
+    "imap-simple": "^4.3.0",
+    "nodemailer": "^6.2.1",
+    "sha256": "^0.2.0"
+  }
+}
