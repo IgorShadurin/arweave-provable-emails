@@ -1,10 +1,20 @@
-const config = require('./config.js');
 const fs = require('fs');
 var imaps = require('imap-simple');
 var nodemailer = require('nodemailer');
 const Arweave = require('arweave/node');
 const sha256 = require('sha256');
 var btoa = require('btoa');
+
+
+['./config.js', './wallet.json'].forEach(file => {
+    if (!fs.existsSync(file)) {
+        console.log('File not found: ' + file + '. Please, follow instructions in README.md');
+        process.exit();
+    }
+});
+
+
+const config = require('./config.js');
 
 const arweave = Arweave.init({
     host: 'arweave.net',
@@ -45,7 +55,7 @@ const sendMail = (email, password, to, subject, arweaveHash) => {
 };
 
 const uploadToArweave = async (html) => {
-    let key = JSON.parse(fs.readFileSync('wallet.json', 'utf8'));
+    let key = JSON.parse(fs.readFileSync('./wallet.json', 'utf8'));
 
     let transaction = await arweave.createTransaction({
         data: html,
