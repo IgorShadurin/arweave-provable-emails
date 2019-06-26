@@ -147,7 +147,7 @@ const code = (email, password, template) => {
                                         .then(hash => {
                                             console.log('Uploaded!');
                                             console.log(hash);
-                                            return sendMail(email, password, result.from, 'Email saved to Arweave ', hash)
+                                            return sendMail(email, password, result.from, 'Email saved to Arweave', hash)
                                                 .then(data => {
                                                     console.log(data);
                                                 });
